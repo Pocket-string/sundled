@@ -3,51 +3,59 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
-import type { Profile } from '@/types/database'
+import type { OrgRole } from '@/types/database'
 
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+interface AuthState {
+  user: User | null
+  orgId: string | null
+  role: OrgRole | null
+  loading: boolean
+}
+
+export function useAuth(): AuthState {
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    orgId: null,
+    role: null,
+    loading: true,
+  })
 
   useEffect(() => {
     const supabase = createClient()
 
-    async function getProfile(userId: string) {
+    async function loadMembership(userId: string) {
       const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
+        .from('org_members')
+        .select('org_id, role')
+        .eq('user_id', userId)
         .single()
 
-      setProfile(data)
+      setState(prev => ({
+        ...prev,
+        orgId: data?.org_id ?? null,
+        role: (data?.role as OrgRole) ?? null,
+      }))
     }
 
-    // Get initial user
     supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-      if (user) {
-        getProfile(user.id)
-      }
-      setLoading(false)
+      setState(prev => ({ ...prev, user, loading: false }))
+      if (user) loadMembership(user.id)
     })
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         const currentUser = session?.user ?? null
-        setUser(currentUser)
+        setState(prev => ({ ...prev, user: currentUser, loading: false }))
         if (currentUser) {
-          getProfile(currentUser.id)
+          loadMembership(currentUser.id)
         } else {
-          setProfile(null)
+          setState(prev => ({ ...prev, orgId: null, role: null }))
         }
-        setLoading(false)
       }
     )
 
     return () => subscription.unsubscribe()
   }, [])
 
-  return { user, profile, loading }
+  return state
 }

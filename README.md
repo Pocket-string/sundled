@@ -70,10 +70,10 @@ src/
 ### 1. Instalar Dependencias
 
 ```bash
-npm install
-# o
 pnpm install
 ```
+
+> **IMPORTANTE:** Este proyecto usa exclusivamente **pnpm**. El uso de npm está **prohibido**.
 
 ### 2. Configurar Variables de Entorno
 
@@ -106,7 +106,7 @@ Edita `.mcp.json` con tu project ref de Supabase:
 ### 4. Iniciar Desarrollo
 
 ```bash
-npm run dev
+pnpm dev
 # Auto-detecta puerto disponible (3000-3006)
 ```
 
@@ -114,18 +114,18 @@ npm run dev
 
 ### Development
 ```bash
-npm run dev          # Servidor desarrollo (auto-port 3000-3006)
-npm run build        # Build para producción
-npm run start        # Servidor producción
+pnpm dev             # Servidor desarrollo (auto-port 3000-3006)
+pnpm build           # Build para producción
+pnpm start           # Servidor producción
 ```
 
 ### Quality Assurance
 ```bash
-npm run test         # Tests con Jest
-npm run test:watch   # Tests en modo watch
-npm run lint         # ESLint
-npm run lint:fix     # Fix automático
-npm run typecheck    # TypeScript check
+pnpm test            # Tests con Jest
+pnpm test:watch      # Tests en modo watch
+pnpm lint            # ESLint
+pnpm lint:fix        # Fix automático
+pnpm typecheck       # TypeScript check
 ```
 
 ### Skills Management
@@ -247,9 +247,9 @@ test('should authenticate user', async () => {
 ### Run Tests
 
 ```bash
-npm run test                    # Run all tests
-npm run test:watch              # Watch mode
-npm run test:coverage           # Coverage report
+pnpm test                       # Run all tests
+pnpm test:watch                 # Watch mode
+pnpm test:coverage              # Coverage report
 ```
 
 ## 🎯 Best Practices
@@ -312,16 +312,16 @@ node scripts/dev-server.js
 ### TypeScript Errors
 
 ```bash
-npm run typecheck          # Verificar errores
+pnpm typecheck             # Verificar errores
 rm -rf .next               # Limpiar cache
-npm install                # Reinstalar deps
+pnpm install               # Reinstalar deps
 ```
 
 ### Tests Failing
 
 ```bash
-npm run test -- --clearCache    # Limpiar cache de Jest
-npm run test -- --verbose       # Ver detalles
+pnpm test -- --clearCache       # Limpiar cache de Jest
+pnpm test -- --verbose          # Ver detalles
 ```
 
 ## 🎯 Próximos Pasos
@@ -346,8 +346,7 @@ Este template está diseñado para ser extendido. Algunas ideas:
 ### Vercel (Recomendado)
 
 ```bash
-npm install -g vercel
-vercel
+pnpm dlx vercel
 ```
 
 ### Configurar Variables de Entorno

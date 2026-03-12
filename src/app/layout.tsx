@@ -1,17 +1,9 @@
 import type { Metadata } from 'next'
-import { siteConfig } from '@/config/siteConfig'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: siteConfig.seo.siteTitle,
-  description: siteConfig.seo.defaultDescription,
-  openGraph: {
-    title: siteConfig.seo.siteTitle,
-    description: siteConfig.seo.defaultDescription,
-    locale: siteConfig.seo.locale,
-    siteName: siteConfig.firmName,
-    type: 'website',
-  },
+  title: 'Lucvia — Solar Plant Monitoring',
+  description: 'Monitoreo fotovoltaico a nivel de string. Detecta bajo-rendimiento, optimiza limpieza, maximiza produccion.',
 }
 
 export default function RootLayout({
@@ -21,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }

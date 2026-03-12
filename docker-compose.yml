@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  lucvia:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_APP_URL: https://lucvia.com
+    container_name: lucvia-app
+    restart: unless-stopped
+    env_file: .env.production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lucvia.rule=Host(`lucvia.com`) || Host(`www.lucvia.com`)"
+      - "traefik.http.routers.lucvia.entrypoints=websecure"
+      - "traefik.http.routers.lucvia.tls.certresolver=letsencrypt"
+      - "traefik.http.services.lucvia.loadbalancer.server.port=3000"
+      # Redirect www to non-www
+      - "traefik.http.middlewares.lucvia-redirect.redirectregex.regex=^https://www\\.lucvia\\.com/(.*)"
+      - "traefik.http.middlewares.lucvia-redirect.redirectregex.replacement=https://lucvia.com/$${1}"
+      - "traefik.http.routers.lucvia.middlewares=lucvia-redirect"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true

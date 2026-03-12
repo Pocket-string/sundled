@@ -48,7 +48,7 @@ export async function resetPassword(formData: FormData) {
   const email = formData.get('email') as string
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/update-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/update-password`,
   })
 
   if (error) {
@@ -70,28 +70,4 @@ export async function updatePassword(formData: FormData) {
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
-}
-
-export async function updateProfile(formData: FormData) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { error: 'Not authenticated' }
-  }
-
-  const { error } = await supabase
-    .from('profiles')
-    .update({
-      full_name: formData.get('full_name') as string,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', user.id)
-
-  if (error) {
-    return { error: error.message }
-  }
-
-  revalidatePath('/', 'layout')
-  return { success: true }
 }

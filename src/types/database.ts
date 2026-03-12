@@ -1,335 +1,205 @@
 // ============================================
-// TIPOS DEL DOMINIO - LexAgenda
+// TIPOS DEL DOMINIO - Lucvia
 // ============================================
 
-export type UserRole = 'client' | 'lawyer' | 'admin'
+export type OrgRole = 'owner' | 'admin' | 'operator' | 'viewer'
 
-export interface Profile {
-  id: string
-  email: string
-  full_name: string | null
-  avatar_url: string | null
-  role: UserRole
-  created_at: string
-  updated_at: string
-}
+export type OnboardingStatus = 'draft' | 'files_ready' | 'ready_to_sync' | 'active'
 
-export interface Lawyer {
-  id: string
-  user_id: string
-  specialty: string
-  bio: string | null
-  experience_years: number
-  hourly_rate: number
-  rating: number
-  is_active: boolean
-  created_at: string
-  updated_at: string
-  // Relaciones
-  profile?: Profile
-}
+export type SyncStatus = 'success' | 'partial' | 'error'
 
-export interface Client {
-  id: string
-  user_id: string | null // null for guest clients
-  full_name: string | null // Direct name for guest clients
-  email: string | null // Direct email for guest clients
-  phone: string | null
-  address: string | null
-  notes: string | null
-  created_at: string
-  updated_at: string
-  // Relaciones
-  profile?: Profile | null
-}
+export type PortalType = 'gpm' | 'huawei' | 'manual' | 'api'
 
-export interface AppointmentType {
+export type JobStatus = 'pending' | 'running' | 'success' | 'partial' | 'error' | 'cancelled'
+
+// ============================================
+// Platform
+// ============================================
+
+export interface Organization {
   id: string
   name: string
-  description: string | null
-  duration_minutes: number
-  price: number
-  is_active: boolean
-  created_at: string
-}
-
-export interface Availability {
-  id: string
-  lawyer_id: string
-  day_of_week: number // 0=Domingo, 6=Sabado
-  start_time: string // "09:00"
-  end_time: string // "17:00"
-  is_available: boolean
-  created_at: string
-}
-
-export type AppointmentStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'cancelled'
-  | 'completed'
-  | 'paid'
-  | 'no_show'
-
-export interface Appointment {
-  id: string
-  client_id: string
-  lawyer_id: string
-  appointment_type_id: string | null
-  scheduled_at: string
-  duration_minutes: number
-  status: AppointmentStatus
-  notes: string | null
-  client_notes: string | null
-  cancellation_reason: string | null
+  slug: string
   created_at: string
   updated_at: string
-  // Relaciones expandidas
-  client?: Client & { profile: Profile }
-  lawyer?: Lawyer & { profile: Profile }
-  appointment_type?: AppointmentType
 }
 
-// ============================================
-// DTOs para operaciones
-// ============================================
-
-export interface CreateAppointmentDTO {
-  lawyer_id: string
-  appointment_type_id: string
-  scheduled_at: string
-  client_notes?: string
-}
-
-export interface UpdateAppointmentDTO {
-  status?: AppointmentStatus
-  notes?: string
-  scheduled_at?: string
-  cancellation_reason?: string
-}
-
-export interface CreateLawyerDTO {
+export interface OrgMember {
+  id: string
+  org_id: string
   user_id: string
-  specialty: string
-  bio?: string
-  experience_years?: number
-  hourly_rate?: number
+  role: OrgRole
+  created_at: string
 }
 
-export interface UpdateLawyerDTO {
-  specialty?: string
-  bio?: string
-  experience_years?: number
-  hourly_rate?: number
+// ============================================
+// Domain: Plants
+// ============================================
+
+export interface Plant {
+  id: string
+  org_id: string
+  name: string
+  slug: string
+  timezone: string
+  lat: number | null
+  lon: number | null
+  ct_count: number
+  inverter_count: number
+  string_count: number
+  module_power_w: number | null
+  energy_price: number | null
+  cleaning_cost: number | null
+  currency: string
+  portal_type: PortalType | null
+  is_active: boolean
+  onboarding_status: OnboardingStatus
+  last_sync_at: string | null
+  last_sync_status: SyncStatus | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PlantIntegration {
+  id: string
+  org_id: string
+  plant_id: string
+  portal_type: PortalType
+  credentials_encrypted: string
+  credentials_iv: string
+  credentials_tag: string
+  query_ids_json: Record<string, string> | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+// ============================================
+// Data Warehouse (Star Schema)
+// ============================================
+
+export interface DimTracker {
+  id: string
+  org_id: string
+  plant_id: string
+  ct_id: string
+  inverter_id: string
+  inverter_base: string | null
+  tracker_id: string
+  string_label: string
+  dc_in: number
+  module: string | null
+  string_id: string       // "CT1-INV 1-1-TRK1-S1"
+  svg_id: string          // "CT1_INV1-1_TRK1_S1"
+  inverter_dc_key: string // "INV 1-1|1"
+  peer_group: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface SvgLayoutRow {
+  id: string
+  org_id: string
+  plant_id: string
+  svg_id: string
+  tag: string | null
+  css_class: string | null
+  title: string | null
+  x: number | null
+  y: number | null
+  width: number | null
+  height: number | null
+  created_at: string
+}
+
+export interface FactString {
+  id: string
+  org_id: string
+  plant_id: string
+  ts_local: string
+  ts_utc: string | null
+  string_id: string
+  svg_id: string | null
+  inverter_id: string | null
+  inverter_dc_key: string | null
+  dc_in: number | null
+  module: string | null
+  peer_group: string | null
+  i_string: number | null  // Current (A)
+  v_string: number | null  // Voltage (V)
+  p_string: number | null  // Power (W) = I * V
+  poa: number | null       // Irradiance (W/m2)
+  t_mod: number | null     // Module temp (degC)
+  created_at: string
+  updated_at: string
+}
+
+// ============================================
+// Operations
+// ============================================
+
+export interface IngestionJob {
+  id: string
+  org_id: string
+  plant_id: string
+  triggered_by: string | null
+  status: JobStatus
+  date_start: string
+  date_end: string
+  records_loaded: number
+  records_expected: number | null
+  error_message: string | null
+  manifest_json: Record<string, unknown> | null
+  started_at: string | null
+  completed_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ============================================
+// DTOs
+// ============================================
+
+export interface CreatePlantDTO {
+  name: string
+  slug: string
+  timezone?: string
+  lat?: number
+  lon?: number
+  ct_count?: number
+  module_power_w?: number
+  energy_price?: number
+  cleaning_cost?: number
+  currency?: string
+  portal_type?: PortalType
+}
+
+export interface UpdatePlantDTO {
+  name?: string
+  timezone?: string
+  lat?: number
+  lon?: number
+  module_power_w?: number
+  energy_price?: number
+  cleaning_cost?: number
+  currency?: string
+  portal_type?: PortalType
   is_active?: boolean
 }
 
-export interface AvailabilitySlot {
-  day_of_week: number
-  start_time: string
-  end_time: string
-  is_available: boolean
-}
-
 // ============================================
-// Tipo expandido de Lawyer con perfil
-// ============================================
-
-export interface LawyerWithProfile extends Lawyer {
-  profile: Profile
-  availability?: Availability[]
-}
-
-export interface AppointmentWithRelations extends Omit<Appointment, 'client' | 'lawyer' | 'appointment_type'> {
-  client: Client & { profile?: Profile | null }
-  lawyer: Lawyer & { profile: Profile }
-  appointment_type: AppointmentType | null
-}
-
-// ============================================
-// Sistema de Precios y Servicios
-// ============================================
-
-export type PricingType = 'hourly' | 'fixed'
-
-export interface ServicePricing {
-  id: string
-  lawyer_id: string
-  service_name: string
-  pricing_type: PricingType
-  hourly_rate: number | null
-  fixed_price: number | null
-  duration_minutes: number
-  description: string | null
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
-
-export interface CreateServicePricingDTO {
-  lawyer_id: string
-  service_name: string
-  pricing_type: PricingType
-  hourly_rate?: number
-  fixed_price?: number
-  duration_minutes: number
-  description?: string
-}
-
-// ============================================
-// Sistema de Pagos
-// ============================================
-
-export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded'
-export type PaymentMethod = 'card' | 'transfer' | 'cash'
-
-export interface Payment {
-  id: string
-  appointment_id: string
-  amount: number
-  status: PaymentStatus
-  payment_method: PaymentMethod | null
-  transaction_id: string | null
-  paid_at: string | null
-  created_at: string
-  // Relaciones
-  appointment?: Appointment
-}
-
-// ============================================
-// Sistema de Notificaciones
-// ============================================
-
-export type NotificationType =
-  | 'appointment_created'
-  | 'appointment_confirmed'
-  | 'appointment_cancelled'
-  | 'appointment_reminder'
-  | 'payment_received'
-  | 'case_update'
-  | 'document_request'
-
-export interface Notification {
-  id: string
-  user_id: string
-  type: NotificationType
-  title: string
-  message: string
-  data: Record<string, unknown> | null
-  is_read: boolean
-  created_at: string
-}
-
-// ============================================
-// Sistema de Proyectos/Casos
-// ============================================
-
-export type ProjectStatus = 'pending' | 'active' | 'on_hold' | 'completed' | 'cancelled'
-export type ProjectPriority = 'low' | 'medium' | 'high' | 'urgent'
-
-export interface Project {
-  id: string
-  lawyer_id: string
-  client_id: string | null
-  title: string
-  description: string | null
-  status: ProjectStatus
-  case_type: string | null
-  start_date: string
-  due_date: string | null
-  budget: number
-  amount_paid: number
-  priority: ProjectPriority
-  notes: string | null
-  created_at: string
-  updated_at: string
-  // Relaciones
-  lawyer?: Lawyer & { profile: Profile }
-  client?: (Client & { profile?: Profile | null }) | null
-}
-
-export interface ProjectWithRelations extends Omit<Project, 'lawyer' | 'client'> {
-  lawyer: Lawyer & { profile: Profile }
-  client: (Client & { profile?: Profile | null }) | null
-}
-
-// ============================================
-// Permisos por Rol
+// Permissions
 // ============================================
 
 export const ROLE_PERMISSIONS = {
-  admin: {
-    canViewAllAppointments: true,
-    canViewFinancials: true,
-    canManageUsers: true,
-    canManageLawyers: true,
-    canViewAnalytics: true,
-    canConfigurePricing: true,
-    canViewAllCases: true,
-  },
-  lawyer: {
-    canViewAllAppointments: false,
-    canViewFinancials: false,
-    canManageUsers: false,
-    canManageLawyers: false,
-    canViewAnalytics: false,
-    canConfigurePricing: false,
-    canViewAllCases: false,
-  },
-  client: {
-    canViewAllAppointments: false,
-    canViewFinancials: false,
-    canManageUsers: false,
-    canManageLawyers: false,
-    canViewAnalytics: false,
-    canConfigurePricing: false,
-    canViewAllCases: false,
-  },
+  owner:    { canManagePlants: true,  canTriggerSync: true,  canManageTeam: true,  canManageBilling: true,  canViewData: true  },
+  admin:    { canManagePlants: true,  canTriggerSync: true,  canManageTeam: true,  canManageBilling: false, canViewData: true  },
+  operator: { canManagePlants: false, canTriggerSync: true,  canManageTeam: false, canManageBilling: false, canViewData: true  },
+  viewer:   { canManagePlants: false, canTriggerSync: false, canManageTeam: false, canManageBilling: false, canViewData: true  },
 } as const
 
-export type Permission = keyof typeof ROLE_PERMISSIONS.admin
+export type Permission = keyof typeof ROLE_PERMISSIONS.owner
 
-export function hasPermission(role: UserRole, permission: Permission): boolean {
+export function hasPermission(role: OrgRole, permission: Permission): boolean {
   return ROLE_PERMISSIONS[role][permission]
-}
-
-// ============================================
-// Database type para Supabase client
-// ============================================
-
-export interface Database {
-  public: {
-    Tables: {
-      profiles: {
-        Row: Profile
-        Insert: Omit<Profile, 'created_at' | 'updated_at'>
-        Update: Partial<Omit<Profile, 'id' | 'created_at'>>
-      }
-      lawyers: {
-        Row: Lawyer
-        Insert: CreateLawyerDTO
-        Update: UpdateLawyerDTO
-      }
-      clients: {
-        Row: Client
-        Insert: Omit<Client, 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Omit<Client, 'id' | 'created_at'>>
-      }
-      appointment_types: {
-        Row: AppointmentType
-        Insert: Omit<AppointmentType, 'id' | 'created_at'>
-        Update: Partial<Omit<AppointmentType, 'id' | 'created_at'>>
-      }
-      availability: {
-        Row: Availability
-        Insert: Omit<Availability, 'id' | 'created_at'>
-        Update: Partial<Omit<Availability, 'id' | 'created_at'>>
-      }
-      appointments: {
-        Row: Appointment
-        Insert: CreateAppointmentDTO & { client_id: string }
-        Update: UpdateAppointmentDTO
-      }
-    }
-  }
 }

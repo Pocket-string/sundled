@@ -53,3 +53,26 @@ export function createServiceClient() {
     }
   )
 }
+
+// Client that reads from the legacy "sunalize" schema (existing Power BI data)
+export function createSunalizeClient() {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!serviceRoleKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not configured')
+  }
+
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    serviceRoleKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      },
+      db: {
+        schema: 'sunalize'
+      }
+    }
+  )
+}

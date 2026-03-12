@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.gitignore
+.env*
+!.env.production.example
+Dockerfile
+docker-compose.yml
+.dockerignore
+README.md
+docs/
+.claude/
+.playwright-mcp/
+*.md
+tsconfig.tsbuildinfo
+vitest.config.ts

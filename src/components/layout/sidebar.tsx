@@ -1,64 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { UserRole } from '@/types/database'
-import { useTour } from '@/components/onboarding'
-import { NotificationCenter } from '@/components/notifications/NotificationCenter'
 
-interface NavItem {
-  href: string
-  label: string
-  icon: React.FC<{ className?: string }>
-  roles: UserRole[]
-  badge?: string
-  tourId?: string
+interface SidebarPlant {
+  id: string
+  name: string
+  onboarding_status: string
 }
 
-const navItems: NavItem[] = [
-  { href: '/dashboard', label: 'Dashboard', icon: HomeIcon, roles: ['admin', 'lawyer', 'client'], tourId: 'dashboard' },
-  { href: '/calendar', label: 'Calendario', icon: CalendarViewIcon, roles: ['admin', 'lawyer'], tourId: 'calendar' },
-  { href: '/appointments', label: 'Mis Citas', icon: CalendarIcon, roles: ['admin', 'lawyer', 'client'], tourId: 'appointments' },
-  { href: '/appointments/new', label: 'Nueva Cita', icon: PlusIcon, roles: ['client'] },
-  { href: '/lawyers', label: 'Abogados', icon: BriefcaseIcon, roles: ['admin', 'client'], tourId: 'lawyers' },
-  { href: '/admin/users', label: 'Usuarios', icon: UsersIcon, roles: ['admin'] },
-  { href: '/admin/pricing', label: 'Precios', icon: CurrencyIcon, roles: ['admin'] },
-  { href: '/admin/analytics', label: 'Analytics', icon: ChartIcon, roles: ['admin'] },
-]
-
-export function Sidebar() {
+export function AppSidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { startTour } = useTour()
-  const [userRole, setUserRole] = useState<UserRole>('client')
-  const [userName, setUserName] = useState<string>('')
-  const [userId, setUserId] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [plants, setPlants] = useState<SidebarPlant[]>([])
 
   useEffect(() => {
-    const fetchUserRole = async () => {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (user) {
-        setUserId(user.id)
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role, full_name')
-          .eq('id', user.id)
-          .single()
-
-        if (profile) {
-          setUserRole(profile.role as UserRole)
-          setUserName(profile.full_name || user.email?.split('@')[0] || 'Usuario')
-        }
-      }
-      setIsLoading(false)
-    }
-
-    fetchUserRole()
+    const supabase = createClient()
+    supabase
+      .from('plants')
+      .select('id, name, onboarding_status')
+      .order('name')
+      .then(({ data }) => {
+        if (data) setPlants(data)
+      })
   }, [])
 
   const handleLogout = async () => {
@@ -67,239 +33,94 @@ export function Sidebar() {
     router.push('/login')
   }
 
-  const filteredNavItems = navItems.filter(item => item.roles.includes(userRole))
-
-  const getRoleBadge = (role: UserRole) => {
-    const badges = {
-      admin: { label: 'Admin', color: 'bg-secondary-500' },
-      lawyer: { label: 'Abogado', color: 'bg-accent-500' },
-      client: { label: 'Cliente', color: 'bg-success-500' },
-    }
-    return badges[role]
-  }
-
-  const roleBadge = getRoleBadge(userRole)
+  const isDashboardActive = pathname === '/dashboard'
 
   return (
-    <aside data-tour="sidebar" className="fixed left-0 top-0 bottom-0 w-64 bg-primary-500 text-white flex flex-col z-40">
+    <aside className="fixed inset-y-0 left-0 w-64 bg-gray-900 border-r border-gray-800 flex flex-col z-40">
       {/* Logo */}
-      <div className="p-6 border-b border-white/10">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-secondary-500 rounded-xl flex items-center justify-center">
-            <ScaleIcon className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="font-heading font-semibold text-lg">LexAgenda</h1>
-            <p className="text-xs text-white/60">Gestión Legal</p>
-          </div>
-        </Link>
-      </div>
-
-      {/* User Info */}
-      <div data-tour="user-profile" className="px-4 py-4 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-            <span className="text-sm font-semibold">
-              {userName.slice(0, 2).toUpperCase()}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{userName}</p>
-            <span className={`inline-flex text-[10px] px-2 py-0.5 rounded-full ${roleBadge.color} text-white`}>
-              {roleBadge.label}
-            </span>
-          </div>
-          {/* Notifications */}
-          {userId && (
-            <NotificationCenter userId={userId} />
-          )}
+      <div className="h-16 flex items-center gap-3 px-6 border-b border-gray-800">
+        <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+          <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+          </svg>
         </div>
+        <span className="text-lg font-bold text-white">Lucvia</span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {isLoading ? (
-          <div className="space-y-2">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-12 bg-white/10 rounded-xl animate-pulse" />
-            ))}
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        {/* Dashboard */}
+        <Link
+          href="/dashboard"
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            isDashboardActive
+              ? 'bg-emerald-500/10 text-emerald-400'
+              : 'text-gray-400 hover:text-white hover:bg-gray-800'
+          }`}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+          </svg>
+          Dashboard
+        </Link>
+
+        {/* Plants section */}
+        <div className="pt-4">
+          <div className="flex items-center justify-between px-3 mb-2">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Plantas</span>
+            <Link
+              href="/plants/new"
+              className="text-gray-500 hover:text-emerald-400 transition-colors"
+              title="Nueva planta"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </Link>
           </div>
-        ) : (
-          <>
-            {/* Sección Principal */}
-            <div className="mb-6">
-              <p className="text-[10px] uppercase tracking-wider text-white/40 px-4 mb-2">
-                Principal
-              </p>
-              {filteredNavItems.slice(0, 5).map((item) => {
-                const isActive = pathname === item.href ||
-                  (item.href !== '/dashboard' && item.href !== '/appointments/new' && pathname.startsWith(item.href))
-                const Icon = item.icon
+
+          {plants.length === 0 ? (
+            <p className="px-3 text-xs text-gray-600">Sin plantas</p>
+          ) : (
+            <div className="space-y-0.5">
+              {plants.map((plant) => {
+                const isPlantActive = pathname.startsWith(`/plants/${plant.id}`)
                 return (
                   <Link
-                    key={item.href}
-                    href={item.href}
-                    data-tour={item.tourId}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-xl
-                      transition-all duration-200
-                      ${isActive
-                        ? 'bg-white/15 text-white border-l-4 border-secondary-500'
-                        : 'text-white/70 hover:bg-white/10 hover:text-white'
-                      }
-                    `}
+                    key={plant.id}
+                    href={`/plants/${plant.id}`}
+                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                      isPlantActive
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    }`}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{item.label}</span>
-                    {item.badge && (
-                      <span className="ml-auto text-xs bg-secondary-500 px-2 py-0.5 rounded-full">
-                        {item.badge}
-                      </span>
-                    )}
+                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                      plant.onboarding_status === 'active' ? 'bg-emerald-400' :
+                      plant.onboarding_status === 'ready_to_sync' ? 'bg-yellow-400' :
+                      'bg-gray-600'
+                    }`} />
+                    <span className="truncate">{plant.name}</span>
                   </Link>
                 )
               })}
             </div>
-
-            {/* Sección Admin */}
-            {userRole === 'admin' && filteredNavItems.length > 5 && (
-              <div data-tour="admin-section">
-                <p className="text-[10px] uppercase tracking-wider text-white/40 px-4 mb-2">
-                  Administración
-                </p>
-                {filteredNavItems.slice(5).map((item) => {
-                  const isActive = pathname.startsWith(item.href)
-                  const Icon = item.icon
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`
-                        flex items-center gap-3 px-4 py-3 rounded-xl
-                        transition-all duration-200
-                        ${isActive
-                          ? 'bg-white/15 text-white border-l-4 border-secondary-500'
-                          : 'text-white/70 hover:bg-white/10 hover:text-white'
-                        }
-                      `}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.label}</span>
-                    </Link>
-                  )
-                })}
-              </div>
-            )}
-          </>
-        )}
+          )}
+        </div>
       </nav>
 
-      {/* Footer Actions */}
-      <div className="p-4 border-t border-white/10 space-y-1">
-        <button
-          onClick={startTour}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
-        >
-          <HelpIcon className="w-5 h-5" />
-          <span className="font-medium">Tour de la App</span>
-        </button>
+      {/* Logout */}
+      <div className="p-3 border-t border-gray-800">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
         >
-          <LogoutIcon className="w-5 h-5" />
-          <span className="font-medium">Cerrar Sesión</span>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+          </svg>
+          Cerrar sesion
         </button>
       </div>
     </aside>
-  )
-}
-
-// Icons
-function HomeIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-    </svg>
-  )
-}
-
-function CalendarIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-    </svg>
-  )
-}
-
-function CalendarViewIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-    </svg>
-  )
-}
-
-function PlusIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-    </svg>
-  )
-}
-
-function BriefcaseIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-    </svg>
-  )
-}
-
-function UsersIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-    </svg>
-  )
-}
-
-function CurrencyIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  )
-}
-
-function ChartIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
-  )
-}
-
-function LogoutIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-    </svg>
-  )
-}
-
-function HelpIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  )
-}
-
-function ScaleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-    </svg>
   )
 }

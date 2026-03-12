@@ -25,7 +25,7 @@ Xavier los entrena, los detecta, y los dirige.
 
 ## Signal Detection Matrix
 
-Para cada tarea, evaluar estas senales contra los 8 skills disponibles.
+Para cada tarea, evaluar estas senales contra los 9 skills disponibles.
 
 ### Tipos de Senal
 
@@ -44,6 +44,7 @@ Para cada tarea, evaluar estas senales contra los 8 skills disponibles.
 | **feature-scaffold** | "new feature", "create feature", "scaffold", nombre de feature especifico (ej: "notifications", "payments") | No existe `src/features/{name}/` para la feature pedida | Usuario describe feature completa end-to-end; necesita components + hooks + services | 2+ pts |
 | **docker-deploy** | "deploy", "Docker", "Dockerfile", "Compose", "Dokploy", "VPS", "production", "health check", "standalone" | No existe `Dockerfile`, falta `output: 'standalone'` en `next.config.ts` | Proyecto feature-complete listo para produccion; usuario dice "deploy" o "lanzar" | 3+ pts |
 | **skill-creator** | "create skill", "new skill", "skill template" | Birth Protocol activado (ver seccion abajo) | 3+ patrones repetidos en dominio sin skill | 2+ pts |
+| **data-pipeline** | "ETL", "ingestion", "batch load", "pipeline", "webscraper", "CSV", "purge", "VACUUM", "storage", "backfill" | Archivos CSV en filesystem, API route `/api/ingest`, tabla `fact_string` con datos raw, `daily_string_summary` para aggregates | Pipeline de datos batch; carga masiva; storage management en free tier; ciclo load-summarize-purge | 3+ pts |
 | **delegate-flash** | "Flash", "delegar", "tarea mecanica", "generar boilerplate", "barrel exports", "mock data" | Tarea del Green Zone (ver /delegate-flash): tipos desde SQL, tests simples, componentes puros, Zod desde interface | Tarea repetitiva/mecanica con input/output bien definido; no requiere razonamiento profundo | 2+ pts |
 
 ### Reglas de Evaluacion
@@ -246,6 +247,7 @@ Algun threshold alcanzado?
 | 3+ tareas de cron jobs, background tasks, queues | `background-jobs` | Ningun skill cubre procesamiento asincrono |
 | 5+ dashboards con widgets, charts, KPIs | `dashboard-builder` | frontend-specialist los maneja pero siguen un patron |
 | 3+ integraciones de pagos con facturacion | `billing-engine` | Dominio complejo con regulaciones y edge cases |
+| 4+ gotchas ETL + storage + webscraper | `data-pipeline` | **YA CREADO** — Load-Summarize-Purge, batch ingestion, webscraper orchestration |
 
 ---
 
@@ -313,6 +315,7 @@ SKILL CATALOG:
   /feature-scaffold  → Estructura Feature-First completa
   /docker-deploy     → Dockerfile, Compose, Dokploy, cache, SSH, health checks
   /delegate-flash    → Delegar tareas mecanicas a Gemini Flash (prompts optimizados)
+  /data-pipeline     → ETL batch, Load-Summarize-Purge, webscraper, storage management
   /skill-creator     → Crear nuevos skills
 
 AGENT CATALOG:

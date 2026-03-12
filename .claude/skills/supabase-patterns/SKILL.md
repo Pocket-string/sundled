@@ -3,7 +3,7 @@ name: supabase-patterns
 description: |
   Patrones avanzados de Supabase validados en produccion: RLS templates, triggers reutilizables,
   DEFERRABLE constraints para swap, SECURITY DEFINER para cross-RLS, y checklist de migraciones.
-  Extraido de 17+ migraciones reales en LinkedIn ContentOps + Soiling Calculator.
+  Extraido de 17+ migraciones reales en LinkedIn ContentOps + Soiling Calculator + Sundled Dashboard.
 allowed-tools:
   - bash
   - read
@@ -32,6 +32,8 @@ Cada patron incluye SQL listo para copiar y gotchas aprendidos en produccion rea
 5. **RLS en la MISMA migracion que CREATE TABLE** — Nunca crear tabla sin policies en la misma migracion. Una tabla sin RLS es un agujero de seguridad.
 6. **`.maybeSingle()` en vez de `.single()`** — `.single()` lanza error si no hay fila. `.maybeSingle()` retorna null. Usar `.maybeSingle()` cuando el registro puede no existir.
 7. **`auth.uid()` solo funciona en contexto RLS** — En funciones SECURITY DEFINER, `auth.uid()` es null. Pasar el user_id como parametro.
+8. **PostgREST requiere GRANT explicito en schemas custom** — Aunque uses service_role key, PostgREST necesita `GRANT ALL ON {schema}.{table} TO service_role;` para INSERT/UPDATE en schemas no-public. Ejecutar `NOTIFY pgrst, 'reload schema';` despues del GRANT.
+9. **DELETE masivo NO libera espacio en disco** — PostgreSQL marca filas como dead tuples. Autovacuum las recicla para reuso, pero el archivo en disco NO se reduce. Ejecutar `VACUUM FULL {schema}.{table};` para reconstruir la tabla y reclamar espacio. Critico en free tier (500 MB).
 
 ---
 
@@ -481,4 +483,6 @@ Gotchas recordar:
   - SECURITY DEFINER = corre como postgres (validar permisos internamente)
   - .maybeSingle() en vez de .single() cuando el registro puede no existir
   - Migracion ANTES de deploy, nunca al reves
+  - GRANT explicito en schemas custom para PostgREST writes
+  - VACUUM FULL tras DELETE masivo para reclamar espacio en disco
 ```

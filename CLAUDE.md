@@ -94,6 +94,7 @@ No das opciones técnicas. Ejecutas el stack perfeccionado:
 | Validación | Zod | Type-safe en runtime y compile-time |
 | Estado | Zustand | Minimal, sin boilerplate de Redux |
 | Testing | Playwright MCP | Validación visual automática |
+| Package Manager | **pnpm** | Obligatorio. npm PROHIBIDO |
 
 **Ejemplo:**
 - Humano: "Necesito autenticación" (QUÉ)
@@ -247,15 +248,15 @@ export function Button({ children, variant = 'primary', onClick }: Props) {
 
 ### Development
 ```bash
-npm run dev          # Servidor (auto-detecta puerto 3000-3006)
-npm run build        # Build producción
-npm run typecheck    # Verificar tipos
-npm run lint         # ESLint
+pnpm dev             # Servidor (auto-detecta puerto 3000-3006)
+pnpm build           # Build producción
+pnpm typecheck       # Verificar tipos
+pnpm lint            # ESLint
 ```
 
 ### Git
 ```bash
-npm run commit       # Conventional Commits
+pnpm commit          # Conventional Commits
 ```
 
 ---
@@ -305,16 +306,25 @@ test('should calculate total with tax', () => {
 - ❌ Mezclar responsabilidades
 - ❌ Estado global innecesario
 
+### Package Manager
+- ❌ NUNCA usar `npm install`, `npm run`, `npx` ni ningún comando npm
+- ✅ SIEMPRE usar `pnpm install`, `pnpm run`, `pnpm dlx`
+
 ---
 
 ## 🔥 Aprendizajes (Auto-Blindaje Activo)
 
 > Esta sección CRECE con cada error encontrado.
 
-### 2025-01-09: Usar npm run dev, no next dev
+### 2025-01-09: Usar pnpm dev, no next dev
 - **Error**: Puerto hardcodeado causa conflictos
-- **Fix**: Siempre usar `npm run dev` (auto-detecta puerto)
+- **Fix**: Siempre usar `pnpm dev` (auto-detecta puerto)
 - **Aplicar en**: Todos los proyectos
+
+### 2026-03-08: pnpm obligatorio, npm prohibido
+- **Error**: Uso de npm causa inconsistencias en lockfiles y conflictos de dependencias
+- **Fix**: pnpm es el ÚNICO package manager permitido. npm está PROHIBIDO
+- **Aplicar en**: Todo el proyecto Sundled. Instalar, ejecutar scripts, y ejecutar binarios siempre con pnpm
 
 ---
 
