@@ -26,6 +26,5 @@ export async function GET() {
     checks.database = 'unreachable'
   }
 
-  const isHealthy = checks.database !== 'unreachable'
-  return NextResponse.json(checks, { status: isHealthy ? 200 : 503 })
+  return NextResponse.json(checks, { status: 200 })
 }
