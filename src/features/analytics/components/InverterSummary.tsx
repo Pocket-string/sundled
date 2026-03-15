@@ -56,7 +56,39 @@ export function InverterSummary({ snapshots, basePath, currentDate }: Props) {
       <div className="p-4 border-b border-gray-800">
         <h3 className="text-sm font-semibold text-white">Resumen por inversor</h3>
       </div>
-      <div className="overflow-x-auto">
+
+      {/* Mobile: compact card layout */}
+      <div className="sm:hidden divide-y divide-gray-800/50">
+        {rows.map((r) => (
+          <Link
+            key={r.inverter_id}
+            href={`${basePath}/inverter/${encodeURIComponent(r.inverter_id)}${dateParam}`}
+            className="block px-4 py-3 hover:bg-gray-800/30 transition-colors"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-white font-medium text-sm">{r.inverter_id}</span>
+              <span className="text-gray-400 text-xs">{r.total} strings</span>
+            </div>
+            <div className="flex gap-0.5 h-2 rounded overflow-hidden mb-2">
+              {r.green > 0 && <div className="bg-emerald-400" style={{ flex: r.green }} />}
+              {r.blue > 0 && <div className="bg-cyan-400" style={{ flex: r.blue }} />}
+              {r.orange > 0 && <div className="bg-orange-400" style={{ flex: r.orange }} />}
+              {r.red > 0 && <div className="bg-red-400" style={{ flex: r.red }} />}
+              {r.gray > 0 && <div className="bg-gray-600" style={{ flex: r.gray }} />}
+            </div>
+            <div className="flex gap-3 text-xs tabular-nums">
+              {r.green > 0 && <span className="text-emerald-400">{r.green}</span>}
+              {r.blue > 0 && <span className="text-cyan-400">{r.blue}</span>}
+              {r.orange > 0 && <span className="text-orange-400">{r.orange}</span>}
+              {r.red > 0 && <span className="text-red-400">{r.red}</span>}
+              {r.gray > 0 && <span className="text-gray-500">{r.gray}</span>}
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Desktop: table layout */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-800 text-gray-400 text-left">

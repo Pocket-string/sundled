@@ -63,11 +63,11 @@ export default async function DemoHeatmapPage({ params, searchParams }: Props) {
   return (
     <div className="p-6 md:p-8 max-w-full mx-auto space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
+      <div className="flex items-start sm:items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">DEMO</span>
-            <h1 className="text-2xl font-bold text-white">ZALDIVIA — Heatmap Analitico</h1>
+            <h1 className="text-lg sm:text-2xl font-bold text-white">ZALDIVIA — Heatmap Analitico</h1>
           </div>
           <p className="text-gray-400 text-sm">
             {dashboard.analysisMode === 'peak_energy' && dashboard.windowStart
@@ -101,15 +101,15 @@ export default async function DemoHeatmapPage({ params, searchParams }: Props) {
       <HeatmapFilters snapshots={dashboard.snapshots} />
 
       {/* Heatmap + Grid */}
-      <div className="flex gap-4">
-        <div className="flex-1 min-w-0">
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex-1 min-w-0 overflow-x-auto">
           <SvgHeatmap
             layout={layout}
             snapshots={dashboard.snapshots}
             plantId={plantId}
           />
         </div>
-        <div className="w-80 flex-shrink-0">
+        <div className="w-full lg:w-80 lg:flex-shrink-0">
           <HeatmapGrid
             snapshots={dashboard.snapshots}
             basePath={`/demo/${plantId}`}

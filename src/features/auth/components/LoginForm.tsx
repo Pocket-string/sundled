@@ -49,6 +49,7 @@ export function LoginForm() {
         type="email"
         label="Correo electrónico"
         placeholder="tu@email.com"
+        autoComplete="email"
         required
       />
 
@@ -59,6 +60,7 @@ export function LoginForm() {
           type={showPassword ? 'text' : 'password'}
           label="Contraseña"
           placeholder="••••••••"
+          autoComplete="current-password"
           required
         />
         <button

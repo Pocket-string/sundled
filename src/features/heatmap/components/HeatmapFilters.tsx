@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useHeatmapStore, type HeatmapMetric } from '../store/useHeatmapStore'
 import type { AnalyticsSnapshot } from '@/features/analytics/types'
 
@@ -25,6 +26,9 @@ const SEVERITIES = [
 
 export function HeatmapFilters({ snapshots }: Props) {
   const { metric, filters, setMetric, setFilter, clearFilters } = useHeatmapStore()
+  const [filtersOpen, setFiltersOpen] = useState(false)
+
+  const hasActiveFilters = !!(filters.ct || filters.inverter || filters.severity || filters.search)
 
   // Derive unique CTs and inverters from data
   const cts = [...new Set(snapshots.map((s) => s.svg_id?.match(/^(CT\d+)/)?.[1]).filter(Boolean))] as string[]
@@ -48,8 +52,8 @@ export function HeatmapFilters({ snapshots }: Props) {
     }
   }
 
-  return (
-    <div className="flex flex-wrap items-center gap-3 text-sm">
+  const filterContent = (
+    <>
       {/* Metric selector */}
       <div className="flex items-center gap-1.5">
         <label className="text-xs text-gray-500">Metrica</label>
@@ -70,7 +74,7 @@ export function HeatmapFilters({ snapshots }: Props) {
         </div>
       </div>
 
-      <div className="h-4 w-px bg-gray-700" />
+      <div className="hidden sm:block h-4 w-px bg-gray-700" />
 
       {/* CT filter */}
       <select
@@ -97,7 +101,7 @@ export function HeatmapFilters({ snapshots }: Props) {
       </select>
 
       {/* Severity filter */}
-      <div className="flex gap-1">
+      <div className="flex flex-wrap gap-1">
         {SEVERITIES.map((sev) => (
           <button
             key={sev.value ?? 'all'}
@@ -114,7 +118,7 @@ export function HeatmapFilters({ snapshots }: Props) {
         ))}
       </div>
 
-      <div className="h-4 w-px bg-gray-700" />
+      <div className="hidden sm:block h-4 w-px bg-gray-700" />
 
       {/* Search */}
       <input
@@ -122,11 +126,11 @@ export function HeatmapFilters({ snapshots }: Props) {
         placeholder="Buscar string..."
         value={filters.search}
         onChange={(e) => setFilter('search', e.target.value)}
-        className="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg px-2.5 py-1 w-36 placeholder-gray-600"
+        className="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg px-2.5 py-1 w-full sm:w-36 placeholder-gray-600"
       />
 
       {/* Clear */}
-      {(filters.ct || filters.inverter || filters.severity || filters.search) && (
+      {hasActiveFilters && (
         <button
           onClick={clearFilters}
           className="text-xs text-gray-500 hover:text-white transition-colors"
@@ -134,6 +138,36 @@ export function HeatmapFilters({ snapshots }: Props) {
           Limpiar
         </button>
       )}
-    </div>
+    </>
+  )
+
+  return (
+    <>
+      {/* Mobile: collapsible filters */}
+      <div className="sm:hidden">
+        <button
+          onClick={() => setFiltersOpen(!filtersOpen)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 text-white text-xs font-medium w-full justify-between"
+        >
+          <span>Filtros{hasActiveFilters ? ' (activos)' : ''}</span>
+          <svg
+            className={`w-4 h-4 transition-transform ${filtersOpen ? 'rotate-180' : ''}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {filtersOpen && (
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-sm p-3 rounded-lg bg-gray-900 border border-gray-800">
+            {filterContent}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: inline filters */}
+      <div className="hidden sm:flex flex-wrap items-center gap-3 text-sm">
+        {filterContent}
+      </div>
+    </>
   )
 }

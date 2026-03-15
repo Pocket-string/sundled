@@ -36,12 +36,59 @@ export function TopDeviations({ snapshots, plantId, basePath }: Props) {
     )
   }
 
+  const ratioColor = (cls: string) =>
+    cls === 'green' ? 'text-emerald-400' :
+    cls === 'blue' ? 'text-cyan-400' :
+    cls === 'orange' ? 'text-orange-400' :
+    cls === 'red' ? 'text-red-400' : 'text-gray-500'
+
   return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 overflow-hidden">
       <div className="p-4 border-b border-gray-800">
         <h3 className="text-sm font-semibold text-white">Top 10 — Mayor desviacion (W)</h3>
       </div>
-      <div className="overflow-x-auto">
+
+      {/* Mobile: card layout */}
+      <div className="sm:hidden divide-y divide-gray-800/50">
+        {top.map((s) => (
+          <Link
+            key={s.string_id}
+            href={`${basePath}/strings/${encodeURIComponent(s.string_id)}`}
+            className="block px-4 py-3 hover:bg-gray-800/30 transition-colors"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className={`inline-block w-2.5 h-2.5 rounded-full ${STATUS_COLORS[s.class]}`} />
+                <span className="text-white text-sm font-medium">{s.string_id}</span>
+              </div>
+              <span className={`text-sm font-semibold ${ratioColor(s.class)}`}>
+                {s.underperf_ratio !== null ? `${(s.underperf_ratio * 100).toFixed(1)}%` : '—'}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div>
+                <span className="text-gray-500">P</span>
+                <span className="text-gray-300 tabular-nums ml-1">{s.p_string?.toFixed(0) ?? '—'}W</span>
+              </div>
+              <div>
+                <span className="text-gray-500">Esp.</span>
+                <span className="text-gray-300 tabular-nums ml-1">{s.p_expected?.toFixed(0) ?? '—'}W</span>
+              </div>
+              <div>
+                <span className="text-gray-500">Delta</span>
+                <span className="text-red-400 font-medium tabular-nums ml-1">{s.underperf_delta_w?.toFixed(0) ?? '—'}W</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-1 text-xs">
+              <span className="text-gray-500">{s.inverter_id ?? '—'}</span>
+              <span className="text-gray-600">{formatMethod(s.reference_method)}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Desktop: table layout */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-800 text-gray-400 text-left">
@@ -76,12 +123,7 @@ export function TopDeviations({ snapshots, plantId, basePath }: Props) {
                   {s.underperf_delta_w?.toFixed(0) ?? '—'}
                 </td>
                 <td className="px-3 py-2 text-right">
-                  <span className={
-                    s.class === 'green' ? 'text-emerald-400' :
-                    s.class === 'blue' ? 'text-cyan-400' :
-                    s.class === 'orange' ? 'text-orange-400' :
-                    s.class === 'red' ? 'text-red-400' : 'text-gray-500'
-                  }>
+                  <span className={ratioColor(s.class)}>
                     {s.underperf_ratio !== null ? `${(s.underperf_ratio * 100).toFixed(1)}%` : '—'}
                   </span>
                 </td>

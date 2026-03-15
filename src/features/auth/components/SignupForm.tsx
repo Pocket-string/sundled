@@ -29,6 +29,7 @@ export function SignupForm() {
         type="email"
         label="Correo electrónico"
         placeholder="tu@email.com"
+        autoComplete="email"
         required
       />
 
@@ -39,6 +40,7 @@ export function SignupForm() {
         label="Contraseña"
         placeholder="Mínimo 6 caracteres"
         hint="La contraseña debe tener al menos 6 caracteres"
+        autoComplete="new-password"
         required
         minLength={6}
       />

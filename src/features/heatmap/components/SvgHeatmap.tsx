@@ -129,7 +129,7 @@ export function SvgHeatmap({ layout, snapshots, plantId }: Props) {
     : null
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col lg:flex-row gap-4">
       {/* SVG Heatmap */}
       <div className="flex-1 rounded-xl border border-gray-800 bg-gray-900 p-4 relative">
         <div
@@ -205,7 +205,7 @@ export function SvgHeatmap({ layout, snapshots, plantId }: Props) {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs text-gray-400">
           {metric === 'class' ? (
             <>
               <LegendItem color={STATUS_COLORS.green} label="Optimo (>=95%)" />
@@ -234,7 +234,7 @@ export function SvgHeatmap({ layout, snapshots, plantId }: Props) {
 
       {/* Detail Panel */}
       {selectedSnapshot && (
-        <div className="w-72 rounded-xl border border-gray-800 bg-gray-900 p-4 space-y-3 flex-shrink-0">
+        <div className="w-full lg:w-72 rounded-xl border border-gray-800 bg-gray-900 p-4 space-y-3 lg:flex-shrink-0">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold text-white">{selectedSnapshot.string_id}</h4>
             <button

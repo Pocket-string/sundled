@@ -57,9 +57,9 @@ export function RatioTimeSeries({ snapshots }: Props) {
 
   return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 space-y-2">
-      <div className="flex items-center gap-4 text-xs">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
         <span className="text-gray-400">Ratio de rendimiento (underperf_ratio)</span>
-        <span className="text-gray-500 ml-auto">
+        <span className="text-gray-500 sm:ml-auto">
           Min: {Math.min(...ratios).toFixed(2)} · Max: {Math.max(...ratios).toFixed(2)}
         </span>
       </div>

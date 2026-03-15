@@ -45,7 +45,7 @@ export function ComparisonTimeSeries({ snapshots }: Props) {
 
   return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 space-y-2">
-      <div className="flex items-center gap-4 text-xs">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-0.5 bg-emerald-400 inline-block" />
           <span className="text-gray-400">P string</span>
@@ -54,7 +54,7 @@ export function ComparisonTimeSeries({ snapshots }: Props) {
           <span className="w-3 h-0.5 bg-cyan-400 inline-block border-dashed" style={{ borderTop: '2px dashed #22d3ee', height: 0 }} />
           <span className="text-gray-400">P esperado</span>
         </span>
-        <span className="text-gray-500 ml-auto">
+        <span className="text-gray-500 sm:ml-auto">
           Min: {minVal.toFixed(0)} W · Max: {maxVal.toFixed(0)} W
         </span>
       </div>

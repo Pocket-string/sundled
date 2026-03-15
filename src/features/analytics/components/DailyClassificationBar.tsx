@@ -31,12 +31,12 @@ export function DailyClassificationBar({ days: dailyData }: Props) {
 
   return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 space-y-3">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-white">Clasificacion diaria</h3>
           <p className="text-xs text-gray-600">Ref: P75 grupo de modulo · POA P95 por dia</p>
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-gray-500">
           {Object.entries(CLASS_LABELS).map(([cls, label]) => (
             <span key={cls} className="flex items-center gap-1">
               <span
