@@ -22,40 +22,83 @@ export async function executePlantStatus(params: {
 
     const supabase = createSunalizeClient()
 
-    const [snapshot, lossSummary, energyData] = await Promise.all([
+    const [snapshot, lossSummary, energyAgg] = await Promise.all([
       getAnalyticsSnapshotDemo(params.plant_id, date),
       getPlantLossSummaryDemo(params.plant_id, days),
-      // Fetch generation + loss totals from daily_string_summary
-      supabase
-        .from('daily_string_summary')
-        .select('p_string_avg, p_expected_avg, energy_loss_wh, peak_intervals')
-        .eq('plant_id', params.plant_id)
-        .gte('date', dateStart)
-        .lte('date', dateEnd)
-        .limit(5000),
+      // Use SQL aggregate to avoid row limits (693 strings × 30 days = ~20k rows)
+      supabase.rpc('aggregate_energy', {
+        p_plant_id: params.plant_id,
+        p_date_start: dateStart,
+        p_date_end: dateEnd,
+      }),
     ])
 
-    // Calculate total generation and expected from daily_string_summary
-    let totalGenerationWh = 0
-    let totalExpectedWh = 0
-    let totalLossWh = 0
-    const rows = energyData.data ?? []
-    for (const row of rows) {
-      const intervals = Number(row.peak_intervals) || 1
-      // p_string_avg is avg power during peak intervals (W), convert to Wh
-      // Each interval = 10 min = 1/6 hour
-      const hoursPerInterval = 10 / 60
-      totalGenerationWh += (Number(row.p_string_avg) || 0) * intervals * hoursPerInterval
-      totalExpectedWh += (Number(row.p_expected_avg) || 0) * intervals * hoursPerInterval
-      totalLossWh += Number(row.energy_loss_wh) || 0
-    }
+    // Fallback: if RPC doesn't exist, use paginated query
+    let totalGenerationKwh = 0
+    let totalExpectedKwh = 0
+    let totalLossKwh = 0
+    let lossPercentage: number | null = null
+    let recordsAnalyzed = 0
+    let daysWithData = 0
 
-    const totalGenerationKwh = Math.round(totalGenerationWh / 10) / 100
-    const totalExpectedKwh = Math.round(totalExpectedWh / 10) / 100
-    const totalLossKwh = Math.round(totalLossWh / 10) / 100
-    const lossPercentage = totalExpectedKwh > 0
-      ? Math.round((totalLossKwh / totalExpectedKwh) * 10000) / 100
-      : null
+    if (energyAgg.data && !energyAgg.error) {
+      const agg = energyAgg.data as {
+        total_generation_wh: number
+        total_expected_wh: number
+        total_loss_wh: number
+        record_count: number
+        day_count: number
+      }
+      totalGenerationKwh = Math.round(agg.total_generation_wh / 10) / 100
+      totalExpectedKwh = Math.round(agg.total_expected_wh / 10) / 100
+      totalLossKwh = Math.round(agg.total_loss_wh / 10) / 100
+      lossPercentage = totalExpectedKwh > 0
+        ? Math.round((totalLossKwh / totalExpectedKwh) * 10000) / 100
+        : null
+      recordsAnalyzed = agg.record_count
+      daysWithData = agg.day_count
+    } else {
+      // Fallback: paginate manually
+      let allRows: { p_string_avg: number | null; p_expected_avg: number | null; energy_loss_wh: number | null; peak_intervals: number | null; date: string }[] = []
+      let offset = 0
+      const pageSize = 1000
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { data: page } = await supabase
+          .from('daily_string_summary')
+          .select('p_string_avg, p_expected_avg, energy_loss_wh, peak_intervals, date')
+          .eq('plant_id', params.plant_id)
+          .gte('date', dateStart)
+          .lte('date', dateEnd)
+          .range(offset, offset + pageSize - 1)
+        if (!page || page.length === 0) break
+        allRows = allRows.concat(page)
+        if (page.length < pageSize) break
+        offset += pageSize
+      }
+
+      let totalGenWh = 0
+      let totalExpWh = 0
+      let totalLossWh = 0
+      const dates = new Set<string>()
+      for (const row of allRows) {
+        const intervals = Number(row.peak_intervals) || 1
+        const hoursPerInterval = 10 / 60
+        totalGenWh += (Number(row.p_string_avg) || 0) * intervals * hoursPerInterval
+        totalExpWh += (Number(row.p_expected_avg) || 0) * intervals * hoursPerInterval
+        totalLossWh += Number(row.energy_loss_wh) || 0
+        dates.add(row.date)
+      }
+
+      totalGenerationKwh = Math.round(totalGenWh / 10) / 100
+      totalExpectedKwh = Math.round(totalExpWh / 10) / 100
+      totalLossKwh = Math.round(totalLossWh / 10) / 100
+      lossPercentage = totalExpectedKwh > 0
+        ? Math.round((totalLossKwh / totalExpectedKwh) * 10000) / 100
+        : null
+      recordsAnalyzed = allRows.length
+      daysWithData = dates.size
+    }
 
     return {
       success: true,
@@ -78,8 +121,8 @@ export async function executePlantStatus(params: {
           totalExpectedKwh,
           totalLossKwh,
           lossPercentage,
-          daysAnalyzed: lossSummary.daysAnalyzed,
-          recordsAnalyzed: rows.length,
+          daysAnalyzed: daysWithData || lossSummary.daysAnalyzed,
+          recordsAnalyzed,
         },
         loss: {
           totalKwh: lossSummary.totalLossKwh,
@@ -310,13 +353,17 @@ export async function executeRecentDetail(params: {
     const supabase = createSunalizeClient()
     const filterField = params.entity_type === 'string' ? 'string_id' : 'inverter_id'
 
+    // Fecha is a timestamp — append time to ensure full day coverage
+    const dateStartTs = params.date_start.includes('T') ? params.date_start : `${params.date_start}T00:00:00`
+    const dateEndTs = params.date_end.includes('T') ? params.date_end : `${params.date_end}T23:59:59`
+
     const { data, error } = await supabase
       .from('fact_string')
       .select('"Fecha", string_id, inverter_id, i_string, v_string, p_string, poa, t_mod')
       .eq('plant_id', params.plant_id)
       .eq(filterField, params.entity_id)
-      .gte('"Fecha"', params.date_start)
-      .lte('"Fecha"', params.date_end)
+      .gte('"Fecha"', dateStartTs)
+      .lte('"Fecha"', dateEndTs)
       .order('"Fecha"', { ascending: true })
       .limit(200)
 

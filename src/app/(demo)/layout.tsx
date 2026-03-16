@@ -77,6 +77,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
         plantId: 'PLT_A',
         plantName: 'Zaldivia',
         stringCount: 693,
+        energyPrice: 0.12,
       }} />
 
     </div>
