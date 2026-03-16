@@ -1,6 +1,6 @@
 export interface ChatMessage {
   id: string
-  role: 'user' | 'assistant' | 'system'
+  role: 'user' | 'assistant'
   content: string
   createdAt: Date
 }
@@ -19,4 +19,13 @@ export interface AgentContext {
   plantName: string
   dateRange?: { start: string; end: string }
   stringCount: number
+  energyPrice?: number
+}
+
+export interface ToolResult {
+  success: boolean
+  source: string
+  dateRange?: { start: string; end: string }
+  data: unknown
+  error?: string
 }

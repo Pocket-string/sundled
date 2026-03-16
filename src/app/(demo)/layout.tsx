@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { AgentProvider } from '@/features/ai-analyst/components/AgentProvider'
 
 function IconSun() {
   return (
@@ -70,6 +71,13 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
       <main className="min-h-[calc(100vh-57px)]">
         {children}
       </main>
+
+      {/* AI Analyst — demo context (no persistence) */}
+      <AgentProvider context={{
+        plantId: 'PLT_A',
+        plantName: 'Zaldivia',
+        stringCount: 693,
+      }} />
 
     </div>
   )
