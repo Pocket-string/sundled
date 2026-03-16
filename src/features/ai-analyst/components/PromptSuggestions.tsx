@@ -11,11 +11,11 @@ const SUGGESTIONS = [
   },
   {
     label: 'Comparar inversores',
-    prompt: 'Compara los inversores INV_01 e INV_02 en los ultimos 7 dias.',
+    prompt: 'Compara los inversores INV 1-1 e INV 2-3 en los ultimos 7 dias.',
   },
   {
-    label: 'Tendencia reciente',
-    prompt: 'Como ha evolucionado el rendimiento en los ultimos 30 dias?',
+    label: 'Perdidas vs generacion',
+    prompt: 'Que porcentaje de la energia generada se perdio esta semana?',
   },
 ]
 

@@ -6,7 +6,7 @@ import type { ToolResult } from '../types'
 
 /**
  * queryPlantStatus — Estado general de la planta.
- * Reutiliza: getAnalyticsSnapshotDemo + getPlantLossSummaryDemo
+ * Reutiliza: getAnalyticsSnapshotDemo + getPlantLossSummaryDemo + energy aggregation
  */
 export async function executePlantStatus(params: {
   plant_id: string
@@ -15,17 +15,52 @@ export async function executePlantStatus(params: {
 }): Promise<ToolResult> {
   try {
     const days = params.period === 'today' ? 1 : params.period === 'last_7d' ? 7 : 30
-    const date = params.date ?? (await getLatestFullDateDemo(params.plant_id)) ?? undefined
+    const latestDate = await getLatestFullDateDemo(params.plant_id)
+    const date = params.date ?? latestDate ?? undefined
+    const dateEnd = date ?? new Date().toISOString().split('T')[0]
+    const dateStart = subtractDays(dateEnd, days)
 
-    const [snapshot, lossSummary] = await Promise.all([
+    const supabase = createSunalizeClient()
+
+    const [snapshot, lossSummary, energyData] = await Promise.all([
       getAnalyticsSnapshotDemo(params.plant_id, date),
       getPlantLossSummaryDemo(params.plant_id, days),
+      // Fetch generation + loss totals from daily_string_summary
+      supabase
+        .from('daily_string_summary')
+        .select('p_string_avg, p_expected_avg, energy_loss_wh, peak_intervals')
+        .eq('plant_id', params.plant_id)
+        .gte('date', dateStart)
+        .lte('date', dateEnd)
+        .limit(5000),
     ])
+
+    // Calculate total generation and expected from daily_string_summary
+    let totalGenerationWh = 0
+    let totalExpectedWh = 0
+    let totalLossWh = 0
+    const rows = energyData.data ?? []
+    for (const row of rows) {
+      const intervals = Number(row.peak_intervals) || 1
+      // p_string_avg is avg power during peak intervals (W), convert to Wh
+      // Each interval = 10 min = 1/6 hour
+      const hoursPerInterval = 10 / 60
+      totalGenerationWh += (Number(row.p_string_avg) || 0) * intervals * hoursPerInterval
+      totalExpectedWh += (Number(row.p_expected_avg) || 0) * intervals * hoursPerInterval
+      totalLossWh += Number(row.energy_loss_wh) || 0
+    }
+
+    const totalGenerationKwh = Math.round(totalGenerationWh / 10) / 100
+    const totalExpectedKwh = Math.round(totalExpectedWh / 10) / 100
+    const totalLossKwh = Math.round(totalLossWh / 10) / 100
+    const lossPercentage = totalExpectedKwh > 0
+      ? Math.round((totalLossKwh / totalExpectedKwh) * 10000) / 100
+      : null
 
     return {
       success: true,
       source: 'daily_string_summary + fact_string (peak energy)',
-      dateRange: { start: lossSummary.dateStart ?? '', end: lossSummary.dateEnd ?? '' },
+      dateRange: { start: lossSummary.dateStart ?? dateStart, end: lossSummary.dateEnd ?? dateEnd },
       data: {
         date: snapshot.date,
         analysisMode: snapshot.analysisMode,
@@ -38,6 +73,14 @@ export async function executePlantStatus(params: {
           gray: snapshot.grayCount,
         },
         avgPoa: snapshot.avgPoa ? Math.round(snapshot.avgPoa) : null,
+        energy: {
+          totalGenerationKwh,
+          totalExpectedKwh,
+          totalLossKwh,
+          lossPercentage,
+          daysAnalyzed: lossSummary.daysAnalyzed,
+          recordsAnalyzed: rows.length,
+        },
         loss: {
           totalKwh: lossSummary.totalLossKwh,
           stringsUnderperforming: lossSummary.stringsUnderperforming,

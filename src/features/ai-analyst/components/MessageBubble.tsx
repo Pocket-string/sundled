@@ -3,6 +3,7 @@
 import type { UIMessage } from 'ai'
 import { isToolUIPart, getToolName } from 'ai'
 import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { ToolCallCard } from './ToolCallCard'
 import { ExportButton } from './ExportButton'
 
@@ -34,7 +35,7 @@ export function MessageBubble({ message }: Props) {
               }
               return (
                 <div key={i} className="prose-agent">
-                  <Markdown>{part.text}</Markdown>
+                  <Markdown remarkPlugins={[remarkGfm]}>{part.text}</Markdown>
                 </div>
               )
             }
