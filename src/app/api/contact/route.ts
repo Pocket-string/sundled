@@ -158,7 +158,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const { error: sendError } = await resend.emails.send({
       from: 'Lucvia Web <onboarding@resend.dev>',
-      to: 'jonathan.navarrete.ai@gmail.com',
+      to: 'jonathan.navarrete@usach.cl',
       replyTo: data.email,
       subject: `Nuevo contacto desde lucvia.com: ${data.company}`,
       html: buildEmailHtml(data),
