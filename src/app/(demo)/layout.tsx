@@ -56,13 +56,13 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
             </span>
           </div>
 
-          {/* Right: Signup CTA */}
-          <Link
-            href="/signup"
+          {/* Right: Contact CTA */}
+          <a
+            href="mailto:ventas@lucvia.com"
             className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
           >
-            Regístrate
-          </Link>
+            Contactar
+          </a>
 
         </div>
       </header>

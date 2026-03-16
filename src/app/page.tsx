@@ -123,7 +123,7 @@ function IconSun() {
 const features = [
   {
     icon: <IconGrid />,
-    title: 'Heatmap SVG interactivo',
+    title: 'Heatmap interactivo',
     description:
       'Visualiza el estado de cada string en tiempo real con un mapa de calor que revela patrones de degradación al instante.',
   },
@@ -145,14 +145,6 @@ const features = [
     description:
       'Conecta tus portales SCADA existentes. Pipeline de datos robusto con soporte para múltiples fuentes y formatos.',
   },
-]
-
-// ─── Metrics ───────────────────────────────────────────────────────────────────
-
-const metrics = [
-  { value: '693', label: 'strings monitoreados' },
-  { value: '99.5%', label: 'uptime garantizado' },
-  { value: '<30 min', label: 'detección de fallas' },
 ]
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
@@ -191,8 +183,8 @@ export default function LandingPage() {
               </Link>
             </li>
             <li>
-              <a href="#pricing" className="text-sm text-gray-400 transition-colors hover:text-white">
-                Pricing
+              <a href="#contacto" className="text-sm text-gray-400 transition-colors hover:text-white">
+                Contacto
               </a>
             </li>
           </ul>
@@ -205,12 +197,12 @@ export default function LandingPage() {
             >
               Ver Demo
             </Link>
-            <Link
-              href="/signup"
+            <a
+              href="mailto:ventas@lucvia.com"
               className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
             >
-              Comenzar
-            </Link>
+              Contactar
+            </a>
           </div>
         </nav>
       </header>
@@ -261,31 +253,8 @@ export default function LandingPage() {
 
             {/* Social proof micro-text */}
             <p className="mt-8 text-sm text-gray-600">
-              Sin tarjeta de crédito · Demo con datos reales de planta
+              Demo interactivo con datos reales de planta
             </p>
-          </div>
-        </section>
-
-        {/* ── Metrics bar ──────────────────────────────────────────────────── */}
-        <section
-          className="border-y border-gray-800/60 bg-gray-900/40"
-          aria-label="Métricas clave"
-        >
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <ul
-              className="divide-y divide-gray-800/60 sm:flex sm:divide-x sm:divide-y-0"
-              role="list"
-            >
-              {metrics.map((m) => (
-                <li
-                  key={m.label}
-                  className="flex flex-col items-center justify-center py-8 sm:flex-1"
-                >
-                  <span className="text-3xl font-extrabold text-emerald-400">{m.value}</span>
-                  <span className="mt-1 text-sm text-gray-500">{m.label}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </section>
 
@@ -328,7 +297,7 @@ export default function LandingPage() {
 
         {/* ── CTA Banner ───────────────────────────────────────────────────── */}
         <section
-          id="pricing"
+          id="contacto"
           className="px-4 pb-24 sm:px-6 lg:px-8 lg:pb-32"
           aria-labelledby="cta-heading"
         >
@@ -343,17 +312,17 @@ export default function LandingPage() {
               id="cta-heading"
               className="mb-4 text-3xl font-bold text-white sm:text-4xl"
             >
-              Prueba con tu planta
+              Implementa Lucvia en tu planta
             </h2>
             <p className="mx-auto mb-8 max-w-lg text-gray-400">
-              Conecta tu planta fotovoltaica en minutos. Sin hardware adicional, sin
-              integraciones complejas. Empieza gratis.
+              Cada planta es diferente. Evaluamos tu infraestructura SCADA,
+              configuramos la ingestión de datos y adaptamos el análisis a tu operación.
             </p>
-            <Link
-              href="/signup"
+            <a
+              href="mailto:ventas@lucvia.com"
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-900/40 transition-colors hover:bg-emerald-500"
             >
-              Crear cuenta gratis
+              Solicitar demostración
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -369,7 +338,7 @@ export default function LandingPage() {
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
-            </Link>
+            </a>
           </div>
         </section>
 
@@ -394,9 +363,9 @@ export default function LandingPage() {
             <Link href="/demo/PLT_A/dashboard" className="text-sm text-gray-600 transition-colors hover:text-gray-400">
               Demo
             </Link>
-            <Link href="/signup" className="text-sm text-gray-600 transition-colors hover:text-gray-400">
-              Registro
-            </Link>
+            <a href="mailto:ventas@lucvia.com" className="text-sm text-gray-600 transition-colors hover:text-gray-400">
+              Contacto
+            </a>
           </nav>
         </div>
       </footer>

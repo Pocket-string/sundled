@@ -27,6 +27,11 @@ export function AgentPanel({ context }: Props) {
   const { messages, sendMessage, status } = useChat({ transport })
   const isLoading = status === 'streaming' || status === 'submitted'
 
+  // Demo credit system: limit to 3 user messages
+  const DEMO_MESSAGE_LIMIT = 3
+  const userMessageCount = messages.filter((m) => m.role === 'user').length
+  const creditsExhausted = userMessageCount >= DEMO_MESSAGE_LIMIT
+
   // Auto-scroll on new messages
   useEffect(() => {
     const el = scrollRef.current
@@ -65,7 +70,9 @@ export function AgentPanel({ context }: Props) {
             </div>
             <div>
               <h2 className="text-sm font-semibold text-white">LUCIA</h2>
-              <p className="text-[10px] text-gray-500">Analista solar</p>
+              <p className="text-[10px] text-gray-500">
+                Analista solar{userMessageCount > 0 && !creditsExhausted && ` · ${DEMO_MESSAGE_LIMIT - userMessageCount} consultas restantes`}
+              </p>
             </div>
           </div>
           <button
@@ -100,13 +107,30 @@ export function AgentPanel({ context }: Props) {
           )}
         </div>
 
-        {/* Input */}
-        <ChatInput
-          value={input}
-          onChange={setInput}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-        />
+        {/* Input or credit exhausted CTA */}
+        {creditsExhausted ? (
+          <div className="border-t border-gray-800/60 p-4 text-center">
+            <p className="mb-2 text-sm text-gray-400">
+              Has usado tus {DEMO_MESSAGE_LIMIT} consultas gratuitas.
+            </p>
+            <a
+              href="mailto:ventas@lucvia.com"
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-500"
+            >
+              Solicitar acceso completo
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              </svg>
+            </a>
+          </div>
+        ) : (
+          <ChatInput
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+          />
+        )}
       </div>
     </>
   )

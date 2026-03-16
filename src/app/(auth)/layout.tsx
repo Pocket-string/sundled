@@ -32,7 +32,7 @@ export default function AuthLayout({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span>Heatmap SVG interactivo a nivel de string</span>
+              <span>Heatmap interactivo a nivel de string</span>
             </div>
             <div className="flex items-center gap-3 text-white/80">
               <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
