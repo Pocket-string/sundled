@@ -335,3 +335,81 @@ h1, h2, h3, h4, h5, h6, .heading {
     to { transform: translateX(0); }
   }
 }
+
+/* LUCIA Agent — markdown prose inside chat bubbles */
+.prose-agent {
+  color: inherit;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.prose-agent p {
+  margin: 0.4em 0;
+}
+.prose-agent p:first-child {
+  margin-top: 0;
+}
+.prose-agent p:last-child {
+  margin-bottom: 0;
+}
+.prose-agent strong {
+  color: #fff;
+  font-weight: 600;
+}
+.prose-agent em {
+  font-style: italic;
+}
+.prose-agent ul, .prose-agent ol {
+  margin: 0.4em 0;
+  padding-left: 1.2em;
+}
+.prose-agent li {
+  margin: 0.15em 0;
+}
+.prose-agent li::marker {
+  color: #10b981;
+}
+.prose-agent code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.8em;
+}
+.prose-agent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: 0.8rem;
+}
+.prose-agent th {
+  text-align: left;
+  font-weight: 600;
+  color: #10b981;
+  padding: 0.3em 0.5em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.prose-agent td {
+  padding: 0.25em 0.5em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.prose-agent h1, .prose-agent h2, .prose-agent h3, .prose-agent h4 {
+  color: #fff;
+  font-weight: 600;
+  margin: 0.6em 0 0.3em;
+}
+.prose-agent h3 {
+  font-size: 0.9rem;
+}
+.prose-agent h4 {
+  font-size: 0.85rem;
+}
+.prose-agent blockquote {
+  border-left: 2px solid #10b981;
+  padding-left: 0.75em;
+  margin: 0.5em 0;
+  color: #9ca3af;
+}
+.prose-agent hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0.5em 0;
+}

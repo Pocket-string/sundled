@@ -24,9 +24,11 @@ export async function POST(req: Request) {
     )
   }
 
-  const systemPrompt = buildSystemPrompt(plantContext ?? undefined)
+  const [systemPrompt, modelMessages] = await Promise.all([
+    buildSystemPrompt(plantContext ?? undefined),
+    convertToModelMessages(messages),
+  ])
   const tools = getAnalystTools()
-  const modelMessages = await convertToModelMessages(messages)
 
   const result = streamText({
     model: google('gemini-2.5-flash'),

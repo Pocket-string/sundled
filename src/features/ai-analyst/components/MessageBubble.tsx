@@ -2,6 +2,7 @@
 
 import type { UIMessage } from 'ai'
 import { isToolUIPart, getToolName } from 'ai'
+import Markdown from 'react-markdown'
 import { ToolCallCard } from './ToolCallCard'
 import { ExportButton } from './ExportButton'
 
@@ -24,10 +25,17 @@ export function MessageBubble({ message }: Props) {
         >
           {message.parts?.map((part, i) => {
             if (part.type === 'text') {
+              if (isUser) {
+                return (
+                  <span key={i} className="whitespace-pre-wrap">
+                    {part.text}
+                  </span>
+                )
+              }
               return (
-                <span key={i} className="whitespace-pre-wrap">
-                  {part.text}
-                </span>
+                <div key={i} className="prose-agent">
+                  <Markdown>{part.text}</Markdown>
+                </div>
               )
             }
             if (isToolUIPart(part)) {
