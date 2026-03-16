@@ -359,12 +359,12 @@ export async function executeRecentDetail(params: {
 
     const { data, error } = await supabase
       .from('fact_string')
-      .select('"Fecha", string_id, inverter_id, i_string, v_string, p_string, poa, t_mod')
+      .select('Fecha, string_id, inverter_id, i_string, v_string, p_string, poa, t_mod')
       .eq('plant_id', params.plant_id)
       .eq(filterField, params.entity_id)
-      .gte('"Fecha"', dateStartTs)
-      .lte('"Fecha"', dateEndTs)
-      .order('"Fecha"', { ascending: true })
+      .gte('Fecha', dateStartTs)
+      .lte('Fecha', dateEndTs)
+      .order('Fecha', { ascending: true })
       .limit(200)
 
     if (error) throw new Error(error.message)
