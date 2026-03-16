@@ -1,4 +1,4 @@
-import { streamText, convertToModelMessages, type UIMessage } from 'ai'
+import { streamText, convertToModelMessages, stepCountIs, type UIMessage } from 'ai'
 import { google } from '@ai-sdk/google'
 import { getAnalystTools } from '@/features/ai-analyst/server/tools'
 import { buildSystemPrompt } from '@/features/ai-analyst/server/system-prompt'
@@ -33,6 +33,7 @@ export async function POST(req: Request) {
     system: systemPrompt,
     messages: modelMessages,
     tools,
+    stopWhen: stepCountIs(3),
   })
 
   return result.toUIMessageStreamResponse()
