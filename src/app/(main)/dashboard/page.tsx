@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { BentoGrid } from '@/components/ui/BentoGrid'
 import { BentoCard } from '@/components/ui/BentoCard'
+import { LucviaLogo } from '@/components/LucviaLogo'
 
 export const metadata = {
   title: 'Dashboard | Lucvia',
@@ -32,9 +33,7 @@ export default async function DashboardPage() {
       {!hasPlants ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6">
-            <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-            </svg>
+            <LucviaLogo className="w-8 h-8 text-emerald-400" />
           </div>
           <h2 className="text-xl font-semibold text-white mb-2">Crea tu primera planta</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -64,9 +63,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
               <div className="flex items-center gap-2 text-emerald-400">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                </svg>
+                <LucviaLogo className="w-8 h-8" />
                 <span className="text-3xl font-bold">{plants.length}</span>
               </div>
             </div>

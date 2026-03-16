@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { LucviaLogo } from '@/components/LucviaLogo'
 
 export const metadata = {
   title: 'Lucvia — Monitoreo fotovoltaico inteligente',
@@ -90,33 +91,6 @@ function IconSparkle() {
   )
 }
 
-function IconSun() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-    </svg>
-  )
-}
-
 // ─── Feature card data ─────────────────────────────────────────────────────────
 
 const features = [
@@ -165,7 +139,7 @@ export default function LandingPage() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-white" aria-label="Lucvia — inicio">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-white">
-              <IconSun />
+              <LucviaLogo className="h-5 w-5" />
             </span>
             <span className="text-xl font-bold tracking-tight">Lucvia</span>
           </Link>
@@ -367,7 +341,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
           <Link href="/" className="flex items-center gap-2 text-white" aria-label="Lucvia — inicio">
             <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-600 text-white">
-              <IconSun />
+              <LucviaLogo className="h-4 w-4" />
             </span>
             <span className="font-bold">Lucvia</span>
           </Link>
