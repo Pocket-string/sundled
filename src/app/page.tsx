@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { LucviaLogo } from '@/components/LucviaLogo'
+import { ContactTrigger } from '@/components/ContactTrigger'
+import { ContactModalProvider } from '@/components/ContactModalProvider'
 
 export const metadata = {
   title: 'Lucvia — Monitoreo fotovoltaico inteligente',
@@ -174,12 +176,11 @@ export default function LandingPage() {
             >
               Ver Demo
             </Link>
-            <a
-              href="mailto:ventas@lucvia.com"
+            <ContactTrigger
               className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
             >
               Contactar
-            </a>
+            </ContactTrigger>
           </div>
         </nav>
       </header>
@@ -220,12 +221,11 @@ export default function LandingPage() {
               >
                 Ver Demo Gratis
               </Link>
-              <a
-                href="mailto:ventas@lucvia.com"
+              <ContactTrigger
                 className="w-full rounded-xl border border-gray-700 px-8 py-3.5 text-base font-semibold text-gray-300 transition-colors hover:border-gray-500 hover:text-white sm:w-auto"
               >
                 Contactar Ventas
-              </a>
+              </ContactTrigger>
             </div>
 
             {/* Social proof micro-text */}
@@ -310,8 +310,7 @@ export default function LandingPage() {
               Cada planta es diferente. Evaluamos tu infraestructura SCADA,
               configuramos la ingestión de datos y adaptamos el análisis a tu operación.
             </p>
-            <a
-              href="mailto:ventas@lucvia.com"
+            <ContactTrigger
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-900/40 transition-colors hover:bg-emerald-500"
             >
               Solicitar demostración
@@ -330,7 +329,7 @@ export default function LandingPage() {
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
-            </a>
+            </ContactTrigger>
           </div>
         </section>
 
@@ -355,12 +354,15 @@ export default function LandingPage() {
             <Link href="/demo/PLT_A/dashboard" className="text-sm text-gray-600 transition-colors hover:text-gray-400">
               Demo
             </Link>
-            <a href="mailto:ventas@lucvia.com" className="text-sm text-gray-600 transition-colors hover:text-gray-400">
+            <ContactTrigger className="text-sm text-gray-600 transition-colors hover:text-gray-400">
               Contacto
-            </a>
+            </ContactTrigger>
           </nav>
         </div>
       </footer>
+
+      {/* ── Contact modal (rendered once, controlled by store) ──────────── */}
+      <ContactModalProvider />
 
     </div>
   )

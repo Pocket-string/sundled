@@ -13,7 +13,7 @@ export default function AuthLayout({
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/20 backdrop-blur flex items-center justify-center">
-                <LucviaLogo className="w-7 h-7 text-emerald-400" />
+                <LucviaLogo className="w-7 h-7" variant="emerald" />
               </div>
               <span className="text-2xl font-bold text-white">Lucvia</span>
             </div>

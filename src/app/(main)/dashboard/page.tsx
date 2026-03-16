@@ -33,7 +33,7 @@ export default async function DashboardPage() {
       {!hasPlants ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6">
-            <LucviaLogo className="w-8 h-8 text-emerald-400" />
+            <LucviaLogo className="w-8 h-8" variant="emerald" />
           </div>
           <h2 className="text-xl font-semibold text-white mb-2">Crea tu primera planta</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -63,7 +63,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
               <div className="flex items-center gap-2 text-emerald-400">
-                <LucviaLogo className="w-8 h-8" />
+                <LucviaLogo className="w-8 h-8" variant="emerald" />
                 <span className="text-3xl font-bold">{plants.length}</span>
               </div>
             </div>

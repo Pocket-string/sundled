@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { AgentProvider } from '@/features/ai-analyst/components/AgentProvider'
 import { LucviaLogo } from '@/components/LucviaLogo'
+import { ContactTrigger } from '@/components/ContactTrigger'
+import { ContactModalProvider } from '@/components/ContactModalProvider'
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -31,12 +33,11 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           {/* Right: Contact CTA */}
-          <a
-            href="mailto:ventas@lucvia.com"
+          <ContactTrigger
             className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
           >
             Contactar
-          </a>
+          </ContactTrigger>
 
         </div>
       </header>
@@ -45,6 +46,9 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
       <main className="min-h-[calc(100vh-57px)]">
         {children}
       </main>
+
+      {/* Contact modal */}
+      <ContactModalProvider />
 
       {/* AI Analyst — demo context (no persistence) */}
       <AgentProvider context={{

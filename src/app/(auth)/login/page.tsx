@@ -7,7 +7,7 @@ export default function LoginPage() {
     <div className="space-y-8">
       <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
         <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-          <LucviaLogo className="w-6 h-6 text-emerald-400" />
+          <LucviaLogo className="w-6 h-6" variant="emerald" />
         </div>
         <span className="text-xl font-bold text-white">Lucvia</span>
       </div>
