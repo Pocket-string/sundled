@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 export const metadata = {
@@ -126,24 +127,28 @@ const features = [
     title: 'Heatmap interactivo',
     description:
       'Visualiza el estado de cada string en tiempo real con un mapa de calor que revela patrones de degradación al instante.',
+    screenshot: '/screenshots/feature-heatmap.png',
   },
   {
     icon: <IconChart />,
     title: 'Motor analítico avanzado',
     description:
       'Calcula desviaciones de rendimiento usando ventanas de energía de pico y referencias P75 por grupo de módulo.',
+    screenshot: '/screenshots/feature-dashboard.png',
   },
   {
     icon: <IconShield />,
     title: 'Detección automática de bajo-rendimiento',
     description:
       'Alertas inteligentes que identifican strings problemáticos en menos de 30 minutos desde que ocurre el evento.',
+    screenshot: '/screenshots/feature-detection.png',
   },
   {
     icon: <IconCloud />,
     title: 'Ingestión automatizada desde SCADA',
     description:
       'Conecta tus portales SCADA existentes. Pipeline de datos robusto con soporte para múltiples fuentes y formatos.',
+    screenshot: '/screenshots/feature-lucia.png',
   },
 ]
 
@@ -278,17 +283,32 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {features.map((f) => (
+            <div className="space-y-20">
+              {features.map((f, i) => (
                 <article
                   key={f.title}
-                  className="rounded-2xl border border-gray-800/50 bg-gray-900/80 p-6 backdrop-blur-sm transition-colors hover:border-emerald-800/60"
+                  className={`flex flex-col items-center gap-8 lg:gap-12 ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
                 >
-                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600/15 text-emerald-400">
-                    {f.icon}
+                  {/* Text */}
+                  <div className="flex-1 text-center lg:text-left">
+                    <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600/15 text-emerald-400">
+                      {f.icon}
+                    </div>
+                    <h3 className="mb-3 text-xl font-bold text-white">{f.title}</h3>
+                    <p className="max-w-md text-base leading-relaxed text-gray-400">{f.description}</p>
                   </div>
-                  <h3 className="mb-2 font-semibold text-white">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-gray-400">{f.description}</p>
+                  {/* Screenshot */}
+                  <div className="flex-1">
+                    <div className="overflow-hidden rounded-2xl border border-gray-800/50 shadow-2xl shadow-black/40">
+                      <Image
+                        src={f.screenshot}
+                        alt={f.title}
+                        width={700}
+                        height={450}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
                 </article>
               ))}
             </div>
