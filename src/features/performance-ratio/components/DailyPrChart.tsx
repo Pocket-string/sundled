@@ -79,14 +79,14 @@ export function DailyPrChart({ points, guaranteedPrPct }: Props) {
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 space-y-2">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
         <span className="text-gray-400 font-medium">PR Diario</span>
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-0.5 bg-emerald-400 inline-block rounded" /> PR Clean
+        <span className="flex items-center gap-1 text-emerald-400">
+          <span className="w-4 h-0.5 bg-emerald-400 inline-block rounded" /> PR Clean
         </span>
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-0.5 bg-cyan-400 inline-block rounded" style={{ borderTop: '1px dashed' }} /> PR Modificado
+        <span className="flex items-center gap-1 text-cyan-400">
+          <span className="w-4 h-0.5 bg-cyan-400 inline-block rounded border-t border-dashed border-cyan-400" /> PR Modificado
         </span>
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-0.5 bg-yellow-500 inline-block rounded" /> Garantia ({guarantee.toFixed(2)}%)
+        <span className="flex items-center gap-1 text-yellow-500">
+          <span className="w-4 h-0.5 bg-yellow-500 inline-block rounded" /> Garantia ({guarantee.toFixed(2)}%)
         </span>
       </div>
 
