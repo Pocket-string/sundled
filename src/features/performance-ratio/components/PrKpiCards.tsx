@@ -10,10 +10,12 @@ export function PrKpiCards({ kpis }: Props) {
   const prClean = kpis.prCleanPct !== null ? (kpis.prCleanPct * 100) : null
   const prMod = kpis.prModifiedPct !== null ? (kpis.prModifiedPct * 100) : null
   const avail = kpis.availabilityPct !== null ? (kpis.availabilityPct * 100) : null
+  const availMod = kpis.availabilityModifiedPct !== null ? (kpis.availabilityModifiedPct * 100) : null
   const prodMwh = kpis.totalProductionKwh !== null ? (kpis.totalProductionKwh / 1000) : null
+  const meterMwh = kpis.meterProductionKwh !== null ? (kpis.meterProductionKwh / 1000) : null
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
       <KpiCard
         label="PR Clean"
         value={prClean !== null ? `${prClean.toFixed(2)}%` : '--'}
@@ -27,17 +29,25 @@ export function PrKpiCards({ kpis }: Props) {
         status="neutral"
       />
       <KpiCard
-        label="Disponibilidad"
+        label="Disp. Clean"
         value={avail !== null ? `${avail.toFixed(2)}%` : '--'}
         target={`Garantia: ${(kpis.guaranteedAvailabilityPct * 100).toFixed(1)}%`}
         status={avail !== null ? (avail >= kpis.guaranteedAvailabilityPct * 100 ? 'good' : 'bad') : 'neutral'}
       />
       <KpiCard
+        label="Disp. Modificada"
+        value={availMod !== null ? `${availMod.toFixed(2)}%` : '--'}
+        target="Excluye indisponibilidad operador"
+        status="neutral"
+      />
+      <KpiCard
         label="Produccion"
         value={prodMwh !== null ? `${prodMwh.toFixed(1)} MWh` : '--'}
-        target={kpis.meterProductionKwh !== null
-          ? `Medidor: ${(kpis.meterProductionKwh / 1000).toFixed(1)} MWh`
-          : undefined}
+        status="neutral"
+      />
+      <KpiCard
+        label="Medidor PMGD"
+        value={meterMwh !== null ? `${meterMwh.toFixed(1)} MWh` : '--'}
         status="neutral"
       />
     </div>

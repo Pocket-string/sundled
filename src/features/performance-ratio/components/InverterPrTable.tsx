@@ -6,9 +6,11 @@ import type { InverterPrRow } from '../services/getPrDashboard'
 interface Props {
   inverters: InverterPrRow[]
   plantId: string
+  basePath?: string  // e.g. "/demo/PLT_A" or "/plants/PLT_A"
 }
 
-export function InverterPrTable({ inverters, plantId }: Props) {
+export function InverterPrTable({ inverters, plantId, basePath }: Props) {
+  const linkBase = basePath ?? `/plants/${plantId}`
   if (inverters.length === 0) {
     return (
       <div className="rounded-xl border border-gray-800 bg-gray-900 p-6 text-center text-gray-500 text-sm">
@@ -34,6 +36,7 @@ export function InverterPrTable({ inverters, plantId }: Props) {
               <th className="px-4 py-2.5 text-xs font-medium text-gray-500 text-right">PR Clean</th>
               <th className="px-4 py-2.5 text-xs font-medium text-gray-500 text-right">PR Mod</th>
               <th className="px-4 py-2.5 text-xs font-medium text-gray-500 text-right">Disp %</th>
+              <th className="px-4 py-2.5 text-xs font-medium text-gray-500 text-right">Disp Mod %</th>
               <th className="px-4 py-2.5 text-xs font-medium text-gray-500 text-right">LAEC (kWh)</th>
               <th className="px-4 py-2.5 text-xs font-medium text-gray-500 text-right">LAEO (kWh)</th>
             </tr>
@@ -43,12 +46,13 @@ export function InverterPrTable({ inverters, plantId }: Props) {
               const prClean = inv.prCleanPct !== null ? (inv.prCleanPct * 100) : null
               const prMod = inv.prModifiedPct !== null ? (inv.prModifiedPct * 100) : null
               const avail = inv.availabilityPct !== null ? (inv.availabilityPct * 100) : null
+              const availMod = inv.availabilityModifiedPct !== null ? (inv.availabilityModifiedPct * 100) : null
 
               return (
                 <tr key={inv.inverterId} className="border-b border-gray-800/50 hover:bg-gray-800/30">
                   <td className="px-4 py-2">
                     <Link
-                      href={`/plants/${plantId}/strings/${encodeURIComponent(inv.inverterId)}`}
+                      href={`${linkBase}/strings/${encodeURIComponent(inv.inverterId)}`}
                       className="text-white hover:text-emerald-400 transition-colors"
                     >
                       {inv.inverterId}
@@ -68,6 +72,9 @@ export function InverterPrTable({ inverters, plantId }: Props) {
                   </td>
                   <td className="px-4 py-2 text-right">
                     <AvailValue value={avail} />
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <AvailValue value={availMod} />
                   </td>
                   <td className="px-4 py-2 text-right text-gray-400">
                     {inv.totalLaecKwh > 0 ? inv.totalLaecKwh.toFixed(1) : '0'}
