@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { ManualSyncForm } from '@/features/ingestion/components/ManualSyncForm'
+import { UnavailabilityManager } from '@/features/performance-ratio/components/UnavailabilityManager'
 
 export const metadata = { title: 'Ingestion | Lucvia' }
 
@@ -45,6 +46,9 @@ export default async function IngestionPage({ params }: Props) {
         ctCount={plant.ct_count}
         isReady={isReady}
       />
+
+      {/* Unavailability Events */}
+      <UnavailabilityManager plantId={plantId} />
 
       {/* Job History */}
       <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">

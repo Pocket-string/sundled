@@ -39,6 +39,12 @@ export default async function PlantDashboardPage({ params }: Props) {
         </div>
         <div className="flex gap-2">
           <Link
+            href={`/plants/${plantId}/performance-ratio`}
+            className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium transition-colors"
+          >
+            Performance Ratio
+          </Link>
+          <Link
             href={`/plants/${plantId}/heatmap`}
             className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium transition-colors"
           >

@@ -72,12 +72,20 @@ export default async function DemoDashboardPage({ params, searchParams }: Props)
             )}
           </div>
         </div>
-        <Link
-          href={`/demo/${plantId}/heatmap${reqDate ? `?date=${reqDate}` : ''}${reqTs ? `&ts=${reqTs}` : ''}`}
-          className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium transition-colors flex-shrink-0"
-        >
-          Heatmap
-        </Link>
+        <div className="flex gap-2 flex-shrink-0">
+          <Link
+            href={`/demo/${plantId}/performance-ratio`}
+            className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium transition-colors"
+          >
+            PR
+          </Link>
+          <Link
+            href={`/demo/${plantId}/heatmap${reqDate ? `?date=${reqDate}` : ''}${reqTs ? `&ts=${reqTs}` : ''}`}
+            className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium transition-colors"
+          >
+            Heatmap
+          </Link>
+        </div>
       </div>
 
       {/* Row 1: Donut + Top Deviations */}
